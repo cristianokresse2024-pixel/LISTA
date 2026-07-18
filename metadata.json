@@ -1,0 +1,6 @@
+{
+  "name": "Lista de Compras",
+  "description": "Uma lista de compras elegante e intuitiva para organizar itens, quantidades, preços estimados e valores gastos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
