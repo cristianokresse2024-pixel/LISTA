@@ -47,8 +47,7 @@ const ITEMS_COLLECTION = 'items';
 export function subscribeToItems(listId: string, callback: (items: ShoppingItem[]) => void) {
   const q = query(
     collection(db, ITEMS_COLLECTION),
-    where('listId', '==', listId),
-    orderBy('addedAt', 'desc')
+    where('listId', '==', listId)
   );
 
   return onSnapshot(q, (snapshot) => {
@@ -56,6 +55,8 @@ export function subscribeToItems(listId: string, callback: (items: ShoppingItem[
     snapshot.forEach((doc) => {
       items.push({ id: doc.id, ...doc.data() } as ShoppingItem);
     });
+    // Ordena por data de adição de forma decrescente no cliente
+    items.sort((a, b) => b.addedAt - a.addedAt);
     callback(items);
   }, (error) => {
     console.error("Erro ao escutar mudanças no Firestore:", error);
@@ -104,15 +105,17 @@ export async function deleteFirebaseItem(id: string) {
 export async function clearFirebaseCart(listId: string) {
   const q = query(
     collection(db, ITEMS_COLLECTION),
-    where('listId', '==', listId),
-    where('checked', '==', true)
+    where('listId', '==', listId)
   );
   
   const snapshot = await getDocs(q);
   const batch = writeBatch(db);
   
   snapshot.forEach((doc) => {
-    batch.delete(doc.ref);
+    const data = doc.data();
+    if (data && data.checked === true) {
+      batch.delete(doc.ref);
+    }
   });
   
   await batch.commit();

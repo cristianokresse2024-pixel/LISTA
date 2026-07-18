@@ -57,8 +57,12 @@ export default function App() {
       }
       
       // Atualiza a URL sem recarregar a página para incluir o listId
-      const newUrl = `${window.location.origin}${window.location.pathname}?listId=${currentListId}`;
-      window.history.replaceState({ path: newUrl }, '', newUrl);
+      try {
+        const newUrl = `${window.location.origin}${window.location.pathname}?listId=${currentListId}`;
+        window.history.replaceState({ path: newUrl }, '', newUrl);
+      } catch (e) {
+        console.warn("Não foi possível atualizar a URL devido a restrições de sandbox do iframe:", e);
+      }
     }
 
     setListId(currentListId);
